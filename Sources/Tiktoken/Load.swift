@@ -6,7 +6,11 @@
 //
 
 import Foundation
+#if canImport(CryptoKit)
 import CryptoKit
+#elseif canImport(Sodium)
+import Sodium
+#endif
 
 enum Load {
     static func loadTiktokenBpe(url: String, decoder: FileDecoder = FileDecoder()) async -> [[UInt8]: Int] {
@@ -57,6 +61,7 @@ enum Load {
     }
 }
 
+#if canImport(CryptoKit)
 private extension String {
     var sha256: String {
         let data = Data(self.utf8)
@@ -64,6 +69,19 @@ private extension String {
         return hashed.compactMap { String(format: "%02x", $0) }.joined()
     }
 }
+#elseif canImport(Sodium)
+private extension String {
+    var sha256: String {
+        return Sodium().SHA256Hash.hash(message: self)!.asHexString()
+    }
+}
+#else
+private extension String {
+    var sha256: String {
+        fatalError("Unsupported platform")
+    }
+}
+#endif
 
 private extension Load {
 
