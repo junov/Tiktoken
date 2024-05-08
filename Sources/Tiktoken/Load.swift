@@ -75,12 +75,6 @@ private extension String {
         return Sodium().SHA256Hash.hash(message: self)!.asHexString()
     }
 }
-#else
-private extension String {
-    var sha256: String {
-        fatalError("Unsupported platform")
-    }
-}
 #endif
 
 private extension Load {
